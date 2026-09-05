@@ -262,6 +262,8 @@
             transition:
                 transform 0.1s,
                 background-color 0.2s;
+
+            -webkit-tap-highlight-color: transparent;
         }
 
 
@@ -280,6 +282,11 @@
         }
 
 
+        .choice-button:focus {
+            outline: none;
+        }
+
+
         .choice-button.correct {
 
             background: #34c759;
@@ -294,6 +301,7 @@
 
             color: white;
         }
+
 
 
         /* ==========================================
@@ -2662,6 +2670,15 @@
             if (autoNext) {
 
                 setTimeout(() => {
+
+                    // 모바일에서 이전 선택지의
+                    // 포커스/터치 상태 제거
+                    if (document.activeElement) {
+                        document.activeElement.blur();
+                    }
+
+                    // 이전 선택지 제거
+                    choicesElement.innerHTML = "";
 
                     createQuestion();
 
