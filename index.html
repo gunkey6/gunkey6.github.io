@@ -293,9 +293,11 @@
             outline: none;
 }
 
+        @media (hover: hover) and (pointer: fine) {
         .choice-button:hover {
             background: #f0f0f0;
         }
+}
 
 
     
@@ -2759,14 +2761,24 @@
 
                 setTimeout(() => {
 
+                    // 1. 현재 포커스 해제
                     if (document.activeElement) {
                         document.activeElement.blur();
                     }
 
+                    // 2. 모든 버튼의 hover/active/focus 잔상 스타일 강제 제거
+                    const currentButtons = choicesElement.querySelectorAll('.choice-button');
+                    currentButtons.forEach(btn => {
+                        btn.classList.remove('correct', 'wrong');
+                        btn.style.backgroundColor = 'white'; // 스타일 초기화
+                    });
+
+                    // 3. 기존 버튼 요소를 비우고 다음 프레임에서 새 문제 생성
                     choicesElement.replaceChildren();
 
-                    createQuestion();
-
+                    requestAnimationFrame(() => {
+                        createQuestion();
+                    });
                 }, 210);
 
 
