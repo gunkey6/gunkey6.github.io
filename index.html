@@ -1,0 +1,3544 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>일본어 문자 퀴즈</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            background: #f5f5f7;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                "Noto Sans KR",
+                sans-serif;
+
+            color: #222;
+        }
+
+
+        /* ==========================================
+           메인 컨테이너
+           ========================================== */
+
+        .container {
+
+            position: relative;
+
+            width: 100%;
+            max-width: 480px;
+
+            min-height: 100vh;
+
+            margin: 0 auto;
+
+            padding: 40px 20px 30px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+        }
+
+
+        /* ==========================================
+           메뉴 버튼
+           ========================================== */
+
+        .menu-button {
+
+            position: absolute;
+
+            top: 30px;
+            left: 20px;
+
+            width: 44px;
+            height: 44px;
+
+            border: none;
+            border-radius: 50%;
+
+            background: white;
+            color: #333;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.10);
+
+            font-size: 25px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+
+            line-height: 1;
+
+            transition:
+                transform 0.1s,
+                background-color 0.2s;
+        }
+
+
+        .menu-button:hover {
+            background: #f0f0f0;
+        }
+
+
+        .menu-button:active {
+            transform: scale(0.90);
+        }
+
+
+        /* ==========================================
+           별표 버튼
+           ========================================== */
+
+        .star-button {
+
+            position: absolute;
+
+            top: 30px;
+            right: 20px;
+
+            width: 44px;
+            height: 44px;
+
+            border: none;
+            border-radius: 50%;
+
+            padding: 0;
+
+            background: white;
+            color: #777;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.10);
+
+            font-size: 23px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            line-height: 1;
+
+            transition:
+                transform 0.1s,
+                background-color 0.2s;
+        }
+
+
+        .star-button:hover {
+            background: #f0f0f0;
+        }
+
+
+        .star-button:active {
+            transform: scale(0.90);
+        }
+
+
+        .star-button.active {
+
+            background: #fff3c4;
+
+            color: #222;
+        }
+
+
+        /* ==========================================
+           문제 영역
+           ========================================== */
+
+        .question-area {
+
+            width: 100%;
+
+            margin-top: 50px;
+
+            text-align: center;
+        }
+
+
+        .kana {
+
+            font-size: 100px;
+
+            font-weight: 400;
+
+            line-height: 1.2;
+        }
+
+
+        .question-text {
+
+            margin-top: 25px;
+
+            font-size: 18px;
+
+            color: #666;
+        }
+
+
+        /* ==========================================
+           선택지
+           ========================================== */
+
+        .choices {
+
+            width: 100%;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 12px;
+
+            margin-top: 40px;
+        }
+
+
+        .choice-button {
+
+            height: 70px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: white;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            color: #222;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.1s,
+                background-color 0.2s;
+        }
+
+
+        .choice-button:hover {
+            background: #f0f0f0;
+        }
+
+
+        .choice-button:active {
+            transform: scale(0.97);
+        }
+
+
+        .choice-button:disabled {
+            cursor: default;
+        }
+
+
+        .choice-button.correct {
+
+            background: #34c759;
+
+            color: white;
+        }
+
+
+        .choice-button.wrong {
+
+            background: #ff3b30;
+
+            color: white;
+        }
+
+
+        /* ==========================================
+           결과 메시지
+           ========================================== */
+
+        .result {
+
+            min-height: 32px;
+
+            margin-top: 25px;
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+            text-align: center;
+        }
+
+
+        .result.correct {
+            color: #34c759;
+        }
+
+
+        .result.wrong {
+            color: #ff3b30;
+        }
+
+
+        /* ==========================================
+           다음 버튼
+           ========================================== */
+
+        .next-button {
+
+            width: 100%;
+
+            height: 58px;
+
+            margin-top: 20px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: #007aff;
+
+            color: white;
+
+            font-size: 18px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .next-button:hover {
+            background: #006ee6;
+        }
+
+
+        .next-button:disabled {
+
+            background: #ccc;
+
+            cursor: default;
+        }
+
+
+        /* ==========================================
+           사이드 메뉴 배경
+           ========================================== */
+
+        .menu-overlay {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background:
+                rgba(0, 0, 0, 0.35);
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transition:
+                opacity 0.25s,
+                visibility 0.25s;
+
+            z-index: 100;
+        }
+
+
+        .menu-overlay.open {
+
+            opacity: 1;
+
+            visibility: visible;
+        }
+
+
+        /* ==========================================
+           사이드 메뉴
+           ========================================== */
+
+        .side-menu {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 280px;
+            height: 100%;
+
+            background: white;
+
+            transform:
+                translateX(-100%);
+
+            transition:
+                transform 0.25s ease;
+
+            z-index: 101;
+
+            box-shadow:
+                4px 0 15px
+                rgba(0, 0, 0, 0.12);
+
+            padding-top: 70px;
+        }
+
+
+        .side-menu.open {
+
+            transform:
+                translateX(0);
+        }
+
+
+        .menu-title {
+
+            padding:
+                0 25px 25px;
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+            border-bottom:
+                1px solid #eee;
+        }
+
+
+        .menu-item {
+
+            width: 100%;
+
+            height: 60px;
+
+            border: none;
+
+            background: white;
+
+            text-align: left;
+
+            padding: 0 25px;
+
+            font-size: 18px;
+
+            color: #333;
+
+            cursor: pointer;
+        }
+
+
+        .menu-item:hover {
+            background: #f5f5f7;
+        }
+
+
+        .menu-item.active {
+
+            background: #eaf3ff;
+
+            color: #007aff;
+
+            font-weight: 700;
+        }
+
+
+        /* ==========================================
+           설정 버튼
+           ========================================== */
+
+        .settings-button {
+
+            position: absolute;
+
+            right: 20px;
+            bottom: 25px;
+
+            width: 44px;
+            height: 44px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: white;
+
+            color: #555;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.10);
+
+            font-size: 23px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+
+            line-height: 1;
+
+            transition:
+                transform 0.1s,
+                background-color 0.2s;
+        }
+
+
+        .settings-button:hover {
+            background: #f0f0f0;
+        }
+
+
+        .settings-button:active {
+            transform: scale(0.90);
+        }
+
+
+        /* ==========================================
+           페이지
+           ========================================== */
+
+        .page {
+
+            display: none;
+
+            width: 100%;
+        }
+
+
+        .page.active {
+
+            display: block;
+        }
+
+
+        /* ==========================================
+           페이지 제목
+           ========================================== */
+
+        .page-title {
+
+            margin-top: 50px;
+
+            text-align: center;
+
+            font-size: 28px;
+
+            font-weight: 700;
+        }
+
+
+        /* ==========================================
+           오답노트
+           ========================================== */
+
+        .favorite-list {
+
+            width: 100%;
+
+            margin-top: 30px;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 12px;
+        }
+
+
+        .favorite-item {
+
+            min-height: 120px;
+
+            padding: 18px;
+
+            background: white;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            cursor: pointer;
+
+            user-select: none;
+        }
+
+
+        .favorite-item:active {
+
+            transform: scale(0.98);
+        }
+
+
+        .favorite-kana {
+
+            font-size: 48px;
+
+            line-height: 1;
+        }
+
+
+        .favorite-sound {
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            color: #555;
+
+            display: none;
+        }
+
+
+        .favorite-item.show-sound
+        .favorite-sound {
+
+            display: block;
+        }
+
+
+        /* ==========================================
+           기록 정렬 버튼
+           ========================================== */
+
+        .history-header {
+
+            width: 100%;
+
+            margin-top: 30px;
+
+            display: flex;
+
+            justify-content: flex-end;
+
+            align-items: center;
+        }
+
+
+        .sort-button {
+
+            height: 38px;
+
+            padding: 0 15px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: #333;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                background-color 0.2s,
+                transform 0.1s;
+        }
+
+
+        .sort-button:hover {
+            background: #f0f0f0;
+        }
+
+
+        .sort-button:active {
+            transform: scale(0.96);
+        }
+
+
+        /* ==========================================
+           기록
+           ========================================== */
+
+        .history-list {
+
+            width: 100%;
+
+            margin-top: 15px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+
+        .history-item {
+
+            display: grid;
+
+            grid-template-columns:
+                70px 1fr 1fr 1fr 44px;
+
+            align-items: center;
+
+            min-height: 75px;
+
+            padding: 10px 15px;
+
+            background: white;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+
+            text-align: center;
+        }
+
+
+        /* ==========================================
+           기록 문자
+           ========================================== */
+
+        .history-character {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            line-height: 1;
+        }
+
+
+        .history-kana {
+
+            font-size: 34px;
+
+            font-weight: 400;
+        }
+
+
+        .history-sound {
+
+            margin-top: 4px;
+
+            font-size: 11px;
+
+            color: #888;
+
+            line-height: 1;
+        }
+
+
+        /* ==========================================
+           기록 별표
+           ========================================== */
+
+        .history-star-button {
+
+            width: 36px;
+            height: 36px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            padding: 0;
+
+            background: #f5f5f7;
+
+            color: #777;
+
+            font-size: 20px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            line-height: 1;
+
+            transition:
+                transform 0.1s,
+                background-color 0.2s;
+        }
+
+
+        .history-star-button:hover {
+            background: #eeeeF2;
+        }
+
+
+        .history-star-button:active {
+            transform: scale(0.90);
+        }
+
+
+        .history-star-button.active {
+
+            background: #fff3c4;
+
+            color: #222;
+        }
+
+
+        .history-label {
+
+            font-size: 13px;
+
+            color: #888;
+
+            margin-bottom: 4px;
+        }
+
+
+        .history-value {
+
+            font-size: 17px;
+
+            font-weight: 700;
+        }
+
+
+        .accuracy-good {
+            color: #34c759;
+        }
+
+
+        .accuracy-normal {
+            color: #007aff;
+        }
+
+
+        .accuracy-bad {
+            color: #ff3b30;
+        }
+
+
+        /* ==========================================
+           빈 화면
+           ========================================== */
+
+        .empty-message {
+
+            grid-column: 1 / -1;
+
+            margin-top: 30px;
+
+            text-align: center;
+
+            color: #888;
+
+            font-size: 17px;
+
+            line-height: 1.6;
+        }
+
+
+        /* ==========================================
+           설정 화면
+           ========================================== */
+
+        .settings-list {
+
+            width: 100%;
+
+            margin-top: 30px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+
+        /* ==========================================
+           출제범위 설정 영역
+           ========================================== */
+
+        .settings-section {
+
+            width: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 12px;
+        }
+
+
+        .settings-section-title {
+
+            font-size: 19px;
+
+            font-weight: 700;
+
+            margin-bottom: 2px;
+        }
+
+
+        .settings-item {
+
+            width: 100%;
+
+            min-height: 64px;
+
+            padding: 0 18px;
+
+            background: white;
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .range-item {
+
+            min-height: 64px;
+        }
+
+
+        .settings-label {
+
+            font-size: 17px;
+
+            font-weight: 600;
+        }
+
+
+        /* ==========================================
+           출제범위 선택 메뉴
+           ========================================== */
+
+        .settings-select {
+
+            width: 173px;
+
+            height: 42px;
+
+            padding: 0 12px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 10px;
+
+            background: white;
+
+            color: #333;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+
+        .settings-select:focus {
+
+            outline: none;
+
+            border-color: #007aff;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(0, 122, 255, 0.12);
+        }
+
+
+        /* ==========================================
+           ON / OFF 스위치
+           ========================================== */
+
+        .switch {
+
+            position: relative;
+
+            width: 50px;
+            height: 30px;
+
+            flex-shrink: 0;
+        }
+
+
+        .switch input {
+
+            opacity: 0;
+
+            width: 0;
+            height: 0;
+        }
+
+
+        .slider {
+
+            position: absolute;
+
+            inset: 0;
+
+            background: #ccc;
+
+            border-radius: 30px;
+
+            cursor: pointer;
+
+            transition:
+                background-color 0.2s;
+        }
+
+
+        .slider::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 24px;
+            height: 24px;
+
+            left: 3px;
+            top: 3px;
+
+            background: white;
+
+            border-radius: 50%;
+
+            box-shadow:
+                0 1px 3px
+                rgba(0, 0, 0, 0.2);
+
+            transition:
+                transform 0.2s;
+        }
+
+
+        .switch input:checked + .slider {
+
+            background: #34c759;
+        }
+
+
+        .switch input:checked + .slider::before {
+
+            transform:
+                translateX(20px);
+        }
+
+
+        /* ==========================================
+           기록 초기화
+           ========================================== */
+
+        .reset-button {
+
+            width: 100%;
+
+            min-height: 58px;
+
+            margin-top: 12px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: #ff3b30;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .reset-button:hover {
+
+            background: #e9342b;
+        }
+
+
+        /* ==========================================
+           모바일 설정 화면
+           ========================================== */
+
+        @media (max-width: 400px) {
+
+            .settings-item {
+
+                padding:
+                    0 14px;
+            }
+
+
+            .settings-select {
+
+                min-width: 135px;
+
+                font-size: 14px;
+            }
+
+
+            .settings-label {
+
+                font-size: 16px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+     사이드 메뉴 배경
+     ========================================== -->
+
+<div
+    id="menuOverlay"
+    class="menu-overlay"
+></div>
+
+
+<!-- ==========================================
+     사이드 메뉴
+     ========================================== -->
+
+<div
+    id="sideMenu"
+    class="side-menu"
+>
+
+    <div class="menu-title">
+        메뉴
+    </div>
+
+
+    <button
+        class="menu-item active"
+        data-page="quiz"
+    >
+        퀴즈
+    </button>
+
+
+    <button
+        class="menu-item"
+        data-page="favorites"
+    >
+        오답노트
+    </button>
+
+
+    <button
+        class="menu-item"
+        data-page="history"
+    >
+        기록
+    </button>
+
+
+    <!-- 설정 버튼 -->
+
+    <button
+        id="settingsButton"
+        class="settings-button"
+        aria-label="설정"
+    >
+        ⚙
+    </button>
+
+</div>
+
+
+<!-- ==========================================
+     메인 컨테이너
+     ========================================== -->
+
+<div class="container">
+
+
+    <!-- 메뉴 버튼 -->
+
+    <button
+        id="menuButton"
+        class="menu-button"
+        aria-label="메뉴"
+    >
+        ☰
+    </button>
+
+
+    <!-- ======================================
+         퀴즈 화면
+         ====================================== -->
+
+    <div
+        id="quizPage"
+        class="page active"
+    >
+
+
+        <!-- 별표 버튼 -->
+
+        <button
+            id="starButton"
+            class="star-button"
+            aria-label="잘 모르겠는 문자 표시"
+        >
+            ☆
+        </button>
+
+
+        <!-- 문제 -->
+
+        <div class="question-area">
+
+            <div
+                id="kana"
+                class="kana"
+            ></div>
+
+
+            <div class="question-text">
+                이 문자의 발음은?
+            </div>
+
+        </div>
+
+
+        <!-- 선택지 -->
+
+        <div
+            id="choices"
+            class="choices"
+        ></div>
+
+
+        <!-- 결과 -->
+
+        <div
+            id="result"
+            class="result"
+        ></div>
+
+
+        <!-- 다음 문제 -->
+
+        <button
+            id="nextButton"
+            class="next-button"
+            disabled
+        >
+            다음 문제
+        </button>
+
+    </div>
+
+
+    <!-- ======================================
+         오답노트 화면
+         ====================================== -->
+
+    <div
+        id="favoritesPage"
+        class="page"
+    >
+
+        <h1 class="page-title">
+            오답노트
+        </h1>
+
+
+        <div
+            id="favoriteList"
+            class="favorite-list"
+        ></div>
+
+    </div>
+
+
+    <!-- ======================================
+         기록 화면
+         ====================================== -->
+
+    <div
+        id="historyPage"
+        class="page"
+    >
+
+        <h1 class="page-title">
+            기록
+        </h1>
+
+
+        <div class="history-header">
+
+            <button
+                id="sortButton"
+                class="sort-button"
+            >
+                오답순
+            </button>
+
+        </div>
+
+
+        <div
+            id="historyList"
+            class="history-list"
+        ></div>
+
+    </div>
+
+
+    <!-- ======================================
+         설정 화면
+         ====================================== -->
+
+    <div
+        id="settingsPage"
+        class="page"
+    >
+
+        <h1 class="page-title">
+            설정
+        </h1>
+
+
+        <div class="settings-list">
+
+
+            <!-- ==================================
+                 출제범위
+                 ================================== -->
+
+            <div class="settings-section">
+
+                <!-- 문자 종류 -->
+
+                <div class="settings-item range-item">
+
+                    <div class="settings-label">
+                        문자 종류
+                    </div>
+
+
+                    <select
+                        id="characterTypeSelect"
+                        class="settings-select"
+                    >
+
+                        <option value="hiragana">
+                            히라가나
+                        </option>
+
+                        <option value="katakana">
+                            가타카나
+                        </option>
+
+                        <option value="both">
+                            히라가나 + 가타카나
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- 출제 범위 -->
+
+                <div class="settings-item range-item">
+
+                    <div class="settings-label">
+                        출제 범위
+                    </div>
+
+
+                    <select
+                        id="questionRangeSelect"
+                        class="settings-select"
+                    >
+
+                        <option value="all">
+                            전체
+                        </option>
+
+                        <option value="favorite-weighted">
+                            오답노트 위주
+                        </option>
+
+                        <option value="favorite-only">
+                            오답노트만
+                        </option>
+
+                        <option value="favorite-excluded">
+                            오답노트 제외
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================
+                 오답노트 자동추가
+                 ================================== -->
+
+            <div class="settings-item">
+
+                <div class="settings-label">
+                    오답노트 자동추가
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="autoFavoriteToggle"
+                        checked
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- ==================================
+                 오답노트 초기화
+                 ================================== -->
+
+            <button
+                id="resetFavoritesButton"
+                class="reset-button"
+            >
+                오답노트 초기화
+            </button>
+
+
+            <!-- ==================================
+                 기록 초기화
+                 ================================== -->
+
+            <button
+                id="resetHistoryButton"
+                class="reset-button"
+            >
+                기록 초기화
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    // ==========================================
+    // 히라가나
+    // ==========================================
+
+    const hiragana = [
+
+        { kana: "あ", sound: "아" },
+        { kana: "い", sound: "이" },
+        { kana: "う", sound: "우" },
+        { kana: "え", sound: "에" },
+        { kana: "お", sound: "오" },
+
+        { kana: "か", sound: "카" },
+        { kana: "き", sound: "키" },
+        { kana: "く", sound: "쿠" },
+        { kana: "け", sound: "케" },
+        { kana: "こ", sound: "코" },
+
+        { kana: "さ", sound: "사" },
+        { kana: "し", sound: "시" },
+        { kana: "す", sound: "스" },
+        { kana: "せ", sound: "세" },
+        { kana: "そ", sound: "소" },
+
+        { kana: "た", sound: "타" },
+        { kana: "ち", sound: "치" },
+        { kana: "つ", sound: "츠" },
+        { kana: "て", sound: "테" },
+        { kana: "と", sound: "토" },
+
+        { kana: "な", sound: "나" },
+        { kana: "に", sound: "니" },
+        { kana: "ぬ", sound: "누" },
+        { kana: "ね", sound: "네" },
+        { kana: "の", sound: "노" },
+
+        { kana: "は", sound: "하" },
+        { kana: "ひ", sound: "히" },
+        { kana: "ふ", sound: "후" },
+        { kana: "へ", sound: "헤" },
+        { kana: "ほ", sound: "호" },
+
+        { kana: "ま", sound: "마" },
+        { kana: "み", sound: "미" },
+        { kana: "む", sound: "무" },
+        { kana: "め", sound: "메" },
+        { kana: "も", sound: "모" },
+
+        { kana: "や", sound: "야" },
+        { kana: "ゆ", sound: "유" },
+        { kana: "よ", sound: "요" },
+
+        { kana: "ら", sound: "라" },
+        { kana: "り", sound: "리" },
+        { kana: "る", sound: "루" },
+        { kana: "れ", sound: "레" },
+        { kana: "ろ", sound: "로" },
+
+        { kana: "わ", sound: "와" },
+        { kana: "を", sound: "오" },
+
+        { kana: "ん", sound: "응" }
+
+    ];
+
+
+    // ==========================================
+    // 가타카나
+    // ==========================================
+
+    const katakana = [
+
+        { kana: "ア", sound: "아" },
+        { kana: "イ", sound: "이" },
+        { kana: "ウ", sound: "우" },
+        { kana: "エ", sound: "에" },
+        { kana: "オ", sound: "오" },
+
+        { kana: "カ", sound: "카" },
+        { kana: "キ", sound: "키" },
+        { kana: "ク", sound: "쿠" },
+        { kana: "ケ", sound: "케" },
+        { kana: "コ", sound: "코" },
+
+        { kana: "サ", sound: "사" },
+        { kana: "シ", sound: "시" },
+        { kana: "ス", sound: "스" },
+        { kana: "セ", sound: "세" },
+        { kana: "ソ", sound: "소" },
+
+        { kana: "タ", sound: "타" },
+        { kana: "チ", sound: "치" },
+        { kana: "ツ", sound: "츠" },
+        { kana: "テ", sound: "테" },
+        { kana: "ト", sound: "토" },
+
+        { kana: "ナ", sound: "나" },
+        { kana: "ニ", sound: "니" },
+        { kana: "ヌ", sound: "누" },
+        { kana: "ネ", sound: "네" },
+        { kana: "ノ", sound: "노" },
+
+        { kana: "ハ", sound: "하" },
+        { kana: "ヒ", sound: "히" },
+        { kana: "フ", sound: "후" },
+        { kana: "ヘ", sound: "헤" },
+        { kana: "ホ", sound: "호" },
+
+        { kana: "マ", sound: "마" },
+        { kana: "ミ", sound: "미" },
+        { kana: "ム", sound: "무" },
+        { kana: "メ", sound: "메" },
+        { kana: "モ", sound: "모" },
+
+        { kana: "ヤ", sound: "야" },
+        { kana: "ユ", sound: "유" },
+        { kana: "ヨ", sound: "요" },
+
+        { kana: "ラ", sound: "라" },
+        { kana: "リ", sound: "리" },
+        { kana: "ル", sound: "루" },
+        { kana: "レ", sound: "레" },
+        { kana: "ロ", sound: "로" },
+
+        { kana: "ワ", sound: "와" },
+        { kana: "ヲ", sound: "오" },
+
+        { kana: "ン", sound: "응" }
+
+    ];
+
+
+    // ==========================================
+    // 전체 문자
+    // ==========================================
+
+    const kanaList = [
+        ...hiragana,
+        ...katakana
+    ];
+
+
+    // ==========================================
+    // 헷갈리는 문자 그룹
+    // ==========================================
+
+    const confusingGroups = [
+
+        ["さ", "ち"],
+
+        ["ぬ", "め"],
+
+        ["れ", "ね", "わ"],
+
+        ["は", "ほ"],
+
+        ["あ", "お"],
+
+        ["シ", "ツ"],
+
+        ["ソ", "ン"],
+
+        ["ス", "ヌ"],
+
+        ["ウ", "ワ"],
+
+        ["コ", "ユ"]
+
+    ];
+
+
+    // ==========================================
+    // HTML 요소
+    // ==========================================
+
+    const kanaElement =
+        document.getElementById("kana");
+
+    const choicesElement =
+        document.getElementById("choices");
+
+    const resultElement =
+        document.getElementById("result");
+
+    const nextButton =
+        document.getElementById("nextButton");
+
+    const starButton =
+        document.getElementById("starButton");
+
+    const menuButton =
+        document.getElementById("menuButton");
+
+    const sideMenu =
+        document.getElementById("sideMenu");
+
+    const menuOverlay =
+        document.getElementById("menuOverlay");
+
+    const favoriteList =
+        document.getElementById("favoriteList");
+
+    const historyList =
+        document.getElementById("historyList");
+
+    const sortButton =
+        document.getElementById("sortButton");
+
+    const settingsButton =
+        document.getElementById("settingsButton");
+
+    const autoFavoriteToggle =
+        document.getElementById(
+            "autoFavoriteToggle"
+        );
+
+    const resetFavoritesButton =
+        document.getElementById(
+            "resetFavoritesButton"
+        );
+
+    const resetHistoryButton =
+        document.getElementById(
+            "resetHistoryButton"
+        );
+
+    const characterTypeSelect =
+        document.getElementById(
+            "characterTypeSelect"
+        );
+
+    const questionRangeSelect =
+        document.getElementById(
+            "questionRangeSelect"
+        );
+
+
+    // ==========================================
+    // 현재 문제
+    // ==========================================
+
+    let currentQuestion = null;
+
+
+    // ==========================================
+    // 별표 데이터
+    // ==========================================
+
+    let starredKana =
+
+        JSON.parse(
+            localStorage.getItem(
+                "starredKana"
+            )
+        ) || [];
+
+
+    // ==========================================
+    // 퀴즈 기록
+    // ==========================================
+
+    let quizHistory =
+
+        JSON.parse(
+            localStorage.getItem(
+                "quizHistory"
+            )
+        ) || {};
+
+
+    // ==========================================
+    // 설정
+    // ==========================================
+
+    let autoFavorite =
+        localStorage.getItem(
+            "autoFavorite"
+        );
+
+
+    if (autoFavorite === null) {
+
+        autoFavorite = true;
+
+    } else {
+
+        autoFavorite =
+            autoFavorite === "true";
+
+    }
+
+
+    // ==========================================
+    // 출제범위 설정
+    // ==========================================
+
+    let characterType =
+
+        localStorage.getItem(
+            "characterType"
+        ) || "both";
+
+
+    let questionRange =
+
+        localStorage.getItem(
+            "questionRange"
+        ) || "all";
+
+
+    autoFavoriteToggle.checked =
+        autoFavorite;
+
+
+    characterTypeSelect.value =
+        characterType;
+
+
+    questionRangeSelect.value =
+        questionRange;
+
+
+    // ==========================================
+    // 기록 정렬 상태
+    // ==========================================
+
+    let historySortMode = 0;
+
+
+    // ==========================================
+    // 배열 섞기
+    // ==========================================
+
+    function shuffle(array) {
+
+        const shuffled = [...array];
+
+
+        for (
+            let i = shuffled.length - 1;
+            i > 0;
+            i--
+        ) {
+
+            const j =
+                Math.floor(
+                    Math.random() *
+                    (i + 1)
+                );
+
+
+            [
+                shuffled[i],
+                shuffled[j]
+            ] = [
+                shuffled[j],
+                shuffled[i]
+            ];
+
+        }
+
+
+        return shuffled;
+
+    }
+
+
+    // ==========================================
+    // 별표 저장
+    // ==========================================
+
+    function saveStarredKana() {
+
+        localStorage.setItem(
+
+            "starredKana",
+
+            JSON.stringify(
+                starredKana
+            )
+
+        );
+
+    }
+
+
+    // ==========================================
+    // 기록 저장
+    // ==========================================
+
+    function saveQuizHistory() {
+
+        localStorage.setItem(
+
+            "quizHistory",
+
+            JSON.stringify(
+                quizHistory
+            )
+
+        );
+
+    }
+
+
+    // ==========================================
+    // 설정 저장
+    // ==========================================
+
+    function saveSettings() {
+
+        localStorage.setItem(
+
+            "autoFavorite",
+
+            String(autoFavorite)
+
+        );
+
+
+        localStorage.setItem(
+
+            "characterType",
+
+            characterType
+
+        );
+
+
+        localStorage.setItem(
+
+            "questionRange",
+
+            questionRange
+
+        );
+
+    }
+
+
+    // ==========================================
+    // 별표 버튼 업데이트
+    // ==========================================
+
+    function updateStarButton() {
+
+        if (!currentQuestion) {
+
+            starButton.textContent = "☆";
+
+            starButton.classList.remove(
+                "active"
+            );
+
+            return;
+
+        }
+
+
+        const isStarred =
+
+            starredKana.includes(
+                currentQuestion.kana
+            );
+
+
+        if (isStarred) {
+
+            starButton.textContent = "★";
+
+            starButton.classList.add(
+                "active"
+            );
+
+        } else {
+
+            starButton.textContent = "☆";
+
+            starButton.classList.remove(
+                "active"
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // 별표 버튼
+    // ==========================================
+
+    starButton.addEventListener(
+
+        "click",
+
+        () => {
+
+            if (!currentQuestion) {
+                return;
+            }
+
+
+            const kana =
+                currentQuestion.kana;
+
+
+            const index =
+                starredKana.indexOf(
+                    kana
+                );
+
+
+            if (index === -1) {
+
+                starredKana.push(
+                    kana
+                );
+
+            } else {
+
+                starredKana.splice(
+                    index,
+                    1
+                );
+
+            }
+
+
+            saveStarredKana();
+
+            updateStarButton();
+
+            renderFavorites();
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 퀴즈 기록 추가
+    // ==========================================
+
+    function recordAnswer(
+        kana,
+        isCorrect
+    ) {
+
+        if (!quizHistory[kana]) {
+
+            quizHistory[kana] = {
+
+                correct: 0,
+
+                wrong: 0
+
+            };
+
+        }
+
+
+        if (isCorrect) {
+
+            quizHistory[kana].correct++;
+
+        } else {
+
+            quizHistory[kana].wrong++;
+
+        }
+
+
+        saveQuizHistory();
+
+    }
+
+
+    // ==========================================
+    // 출제 대상 가져오기
+    // ==========================================
+
+    function getQuestionPool() {
+
+        // --------------------------------------
+        // 문자 종류
+        // --------------------------------------
+
+        let basePool;
+
+
+        if (
+            characterType ===
+            "hiragana"
+        ) {
+
+            basePool = hiragana;
+
+        }
+
+        else if (
+            characterType ===
+            "katakana"
+        ) {
+
+            basePool = katakana;
+
+        }
+
+        else {
+
+            basePool = kanaList;
+
+        }
+
+
+        // --------------------------------------
+        // 오답노트만
+        // --------------------------------------
+
+        if (
+            questionRange ===
+            "favorite-only"
+        ) {
+
+            return basePool.filter(
+                item =>
+                    starredKana.includes(
+                        item.kana
+                    )
+            );
+
+        }
+
+
+        // --------------------------------------
+        // 오답노트 위주
+        // --------------------------------------
+
+        if (
+            questionRange ===
+            "favorite-weighted"
+        ) {
+
+            const weightedPool = [];
+
+
+            basePool.forEach(item => {
+
+                if (
+                    starredKana.includes(
+                        item.kana
+                    )
+                ) {
+
+                    // 오답노트 문자
+                    // 가중치 2
+
+                    weightedPool.push(item);
+                    weightedPool.push(item);
+
+                }
+
+                else {
+
+                    // 일반 문자
+                    // 가중치 1
+
+                    weightedPool.push(item);
+
+                }
+
+            });
+
+
+            return weightedPool;
+
+        }
+
+        
+        // --------------------------------------
+        // 오답노트 제외
+        // --------------------------------------
+
+        if (
+            questionRange ===
+            "favorite-excluded"
+        ) {
+
+            return basePool.filter(
+                item =>
+                    !starredKana.includes(
+                        item.kana
+                    )
+            );
+
+        }
+
+        // --------------------------------------
+        // 전체
+        // --------------------------------------
+
+        return basePool;
+
+    }
+
+
+    // ==========================================
+    // 문제 생성
+    // ==========================================
+
+    function createQuestion() {
+
+        resultElement.textContent = "";
+
+        resultElement.className =
+            "result";
+
+
+        nextButton.disabled = true;
+
+
+        // --------------------------------------
+        // 출제 대상
+        // --------------------------------------
+
+        const questionPool =
+            getQuestionPool();
+
+
+        // --------------------------------------
+        // 오답노트만 선택했는데
+        // 오답노트가 비어있는 경우
+        // --------------------------------------
+
+        if (
+            questionPool.length === 0
+        ) {
+
+            currentQuestion = null;
+
+
+            kanaElement.textContent =
+                "—";
+
+
+            choicesElement.innerHTML =
+                "";
+
+
+            resultElement.textContent =
+                "오답노트에 등록된 문자가 없습니다.";
+
+
+            resultElement.className =
+                "result wrong";
+
+
+            updateStarButton();
+
+
+            return;
+
+        }
+
+
+        // --------------------------------------
+        // 랜덤 문제 선택
+        // --------------------------------------
+
+        const randomIndex =
+
+            Math.floor(
+                Math.random() *
+                questionPool.length
+            );
+
+
+        currentQuestion =
+            questionPool[randomIndex];
+
+
+        kanaElement.textContent =
+            currentQuestion.kana;
+
+
+        updateStarButton();
+
+
+        // --------------------------------------
+        // 헷갈리는 문자 찾기
+        // --------------------------------------
+
+        let confusingKana = [];
+
+
+        for (
+            const group of confusingGroups
+        ) {
+
+            if (
+                group.includes(
+                    currentQuestion.kana
+                )
+            ) {
+
+                confusingKana =
+
+                    group.filter(
+                        kana =>
+                            kana !==
+                            currentQuestion.kana
+                    );
+
+
+                break;
+
+            }
+
+        }
+
+
+        // --------------------------------------
+        // 헷갈리는 문자 발음
+        // --------------------------------------
+
+        const confusingSounds =
+
+            confusingKana
+
+                .map(kana => {
+
+                    const item =
+
+                        kanaList.find(
+                            data =>
+                                data.kana ===
+                                kana
+                        );
+
+
+                    return item
+                        ? item.sound
+                        : null;
+
+                })
+
+                .filter(sound =>
+
+                    sound !== null &&
+
+                    sound !==
+                        currentQuestion.sound
+
+                );
+
+
+        // --------------------------------------
+        // 일반 오답
+        // --------------------------------------
+
+        const wrongAnswers =
+
+            kanaList
+
+                .filter(
+                    item =>
+
+                        item.sound !==
+                        currentQuestion.sound
+                )
+
+                .map(
+                    item =>
+                        item.sound
+                );
+
+
+        const uniqueWrongAnswers =
+
+            [...new Set(
+                wrongAnswers
+            )];
+
+
+        // --------------------------------------
+        // 우선 오답
+        // --------------------------------------
+
+        const priorityWrongAnswers =
+
+            [...new Set(
+                confusingSounds
+            )];
+
+
+        const otherWrongAnswers =
+
+            uniqueWrongAnswers.filter(
+
+                sound =>
+
+                    !priorityWrongAnswers
+                        .includes(sound)
+
+            );
+
+
+        // --------------------------------------
+        // 오답 3개
+        // --------------------------------------
+
+        let selectedWrongAnswers = [];
+
+
+        selectedWrongAnswers.push(
+
+            ...shuffle(
+                priorityWrongAnswers
+            )
+
+        );
+
+
+        selectedWrongAnswers.push(
+
+            ...shuffle(
+                otherWrongAnswers
+            )
+
+        );
+
+
+        selectedWrongAnswers =
+
+            selectedWrongAnswers.slice(
+                0,
+                3
+            );
+
+
+        // --------------------------------------
+        // 선택지
+        // --------------------------------------
+
+        const choices =
+
+            shuffle([
+
+                currentQuestion.sound,
+
+                ...selectedWrongAnswers
+
+            ]);
+
+
+        choicesElement.innerHTML = "";
+
+
+        choices.forEach(choice => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "choice-button";
+
+
+            button.textContent =
+                choice;
+
+
+            button.addEventListener(
+
+                "click",
+
+                () => {
+
+                    checkAnswer(
+                        button,
+                        choice
+                    );
+
+                }
+
+            );
+
+
+            choicesElement.appendChild(
+                button
+            );
+
+        });
+
+    }
+
+
+    // ==========================================
+    // 정답 확인
+    // ==========================================
+
+    function checkAnswer(
+        selectedButton,
+        selectedAnswer
+    ) {
+
+        const buttons =
+
+            document.querySelectorAll(
+                ".choice-button"
+            );
+
+
+        buttons.forEach(
+            button => {
+
+                button.disabled = true;
+
+            }
+        );
+
+
+        buttons.forEach(
+            button => {
+
+                if (
+
+                    button.textContent ===
+                    currentQuestion.sound
+
+                ) {
+
+                    button.classList.add(
+                        "correct"
+                    );
+
+                }
+
+            }
+        );
+
+
+        if (
+
+            selectedAnswer ===
+            currentQuestion.sound
+
+        ) {
+
+            resultElement.textContent =
+                "✓ 정답입니다!";
+
+
+            resultElement.className =
+                "result correct";
+
+
+            recordAnswer(
+                currentQuestion.kana,
+                true
+            );
+
+        }
+
+
+        else {
+
+            selectedButton.classList.add(
+                "wrong"
+            );
+
+
+            resultElement.textContent =
+
+                `✗ 틀렸습니다. 정답은 ${currentQuestion.sound}입니다.`;
+
+
+            resultElement.className =
+                "result wrong";
+
+
+            recordAnswer(
+                currentQuestion.kana,
+                false
+            );
+
+
+            // 오답노트 자동 추가
+
+            if (autoFavorite) {
+
+                const kana =
+                    currentQuestion.kana;
+
+
+                if (
+                    !starredKana.includes(kana)
+                ) {
+
+                    starredKana.push(kana);
+
+                    saveStarredKana();
+
+                }
+
+            }
+
+
+            updateStarButton();
+
+            renderFavorites();
+
+        }
+
+
+        nextButton.disabled = false;
+
+    }
+
+
+    // ==========================================
+    // 다음 문제
+    // ==========================================
+
+    nextButton.addEventListener(
+
+        "click",
+
+        () => {
+
+            createQuestion();
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 사이드 메뉴 열기
+    // ==========================================
+
+    function openMenu() {
+
+        sideMenu.classList.add(
+            "open"
+        );
+
+        menuOverlay.classList.add(
+            "open"
+        );
+
+    }
+
+
+    // ==========================================
+    // 사이드 메뉴 닫기
+    // ==========================================
+
+    function closeMenu() {
+
+        sideMenu.classList.remove(
+            "open"
+        );
+
+        menuOverlay.classList.remove(
+            "open"
+        );
+
+    }
+
+
+    menuButton.addEventListener(
+        "click",
+        openMenu
+    );
+
+
+    menuOverlay.addEventListener(
+        "click",
+        closeMenu
+    );
+
+
+    // ==========================================
+    // 오답노트 표시
+    // ==========================================
+
+    function renderFavorites() {
+
+        favoriteList.innerHTML = "";
+
+
+        if (
+            starredKana.length === 0
+        ) {
+
+            favoriteList.innerHTML = `
+
+                <div class="empty-message">
+
+                    아직 오답노트에 등록된 문자가 없습니다.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        const sortedStarredKana =
+
+            [...starredKana].sort(
+                (a, b) => {
+
+                    const wrongA =
+
+                        quizHistory[a]
+                            ? quizHistory[a].wrong || 0
+                            : 0;
+
+
+                    const wrongB =
+
+                        quizHistory[b]
+                            ? quizHistory[b].wrong || 0
+                            : 0;
+
+
+                    return wrongB - wrongA;
+
+                }
+            );
+
+
+        sortedStarredKana.forEach(kana => {
+
+            const item =
+
+                kanaList.find(
+                    data =>
+                        data.kana === kana
+                );
+
+
+            if (!item) {
+                return;
+            }
+
+
+            const favoriteItem =
+
+                document.createElement(
+                    "div"
+                );
+
+
+            favoriteItem.className =
+                "favorite-item";
+
+
+            favoriteItem.innerHTML = `
+
+                <div class="favorite-kana">
+                    ${item.kana}
+                </div>
+
+                <div class="favorite-sound">
+                    ${item.sound}
+                </div>
+
+            `;
+
+
+            favoriteItem.addEventListener(
+                "click",
+                () => {
+
+                    favoriteItem.classList.toggle(
+                        "show-sound"
+                    );
+
+                }
+            );
+
+
+            favoriteList.appendChild(
+                favoriteItem
+            );
+
+        });
+
+    }
+
+
+    // ==========================================
+    // 정답률 계산
+    // ==========================================
+
+    function calculateAccuracy(
+        correct,
+        wrong
+    ) {
+
+        const total =
+            correct + wrong;
+
+
+        if (total === 0) {
+            return 0;
+        }
+
+
+        return Math.round(
+            (correct / total) * 100
+        );
+
+    }
+
+
+    // ==========================================
+    // 오답률 계산
+    // ==========================================
+
+    function calculateWrongRate(
+        correct,
+        wrong
+    ) {
+
+        const total =
+            correct + wrong;
+
+
+        if (total === 0) {
+            return 0;
+        }
+
+
+        return Math.round(
+            (wrong / total) * 100
+        );
+
+    }
+
+
+    // ==========================================
+    // 기록 정렬 버튼
+    // ==========================================
+
+    sortButton.addEventListener(
+
+        "click",
+
+        () => {
+
+            if (
+                historySortMode === 0
+            ) {
+
+                historySortMode = 1;
+
+                sortButton.textContent =
+                    "오답률순";
+
+            }
+
+            else {
+
+                historySortMode = 0;
+
+                sortButton.textContent =
+                    "오답순";
+
+            }
+
+
+            renderHistory();
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 기록 화면 생성
+    // ==========================================
+
+    function renderHistory() {
+
+        historyList.innerHTML = "";
+
+
+        let recordedKana =
+
+            kanaList.filter(
+                item =>
+                    quizHistory[item.kana]
+            );
+
+
+        if (
+            historySortMode === 0
+        ) {
+
+            recordedKana.sort(
+                (a, b) => {
+
+                    const wrongA =
+                        quizHistory[a.kana].wrong || 0;
+
+                    const wrongB =
+                        quizHistory[b.kana].wrong || 0;
+
+
+                    return wrongB - wrongA;
+
+                }
+            );
+
+        }
+
+
+        else {
+
+            recordedKana.sort(
+                (a, b) => {
+
+                    const recordA =
+                        quizHistory[a.kana];
+
+                    const recordB =
+                        quizHistory[b.kana];
+
+
+                    const wrongRateA =
+
+                        calculateWrongRate(
+                            recordA.correct || 0,
+                            recordA.wrong || 0
+                        );
+
+
+                    const wrongRateB =
+
+                        calculateWrongRate(
+                            recordB.correct || 0,
+                            recordB.wrong || 0
+                        );
+
+
+                    return wrongRateB -
+                           wrongRateA;
+
+                }
+            );
+
+        }
+
+
+        if (
+            recordedKana.length === 0
+        ) {
+
+            historyList.innerHTML = `
+
+                <div class="empty-message">
+
+                    아직 퀴즈 기록이 없습니다.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        recordedKana.forEach(item => {
+
+            const record =
+                quizHistory[item.kana];
+
+
+            const correct =
+                record.correct || 0;
+
+
+            const wrong =
+                record.wrong || 0;
+
+
+            const accuracy =
+
+                calculateAccuracy(
+                    correct,
+                    wrong
+                );
+
+
+            let accuracyClass =
+                "accuracy-normal";
+
+
+            if (
+                accuracy >= 80
+            ) {
+
+                accuracyClass =
+                    "accuracy-good";
+
+            }
+
+            else if (
+                accuracy < 50
+            ) {
+
+                accuracyClass =
+                    "accuracy-bad";
+
+            }
+
+
+            const historyItem =
+
+                document.createElement(
+                    "div"
+                );
+
+
+            historyItem.className =
+                "history-item";
+
+
+            const isStarred =
+
+                starredKana.includes(
+                    item.kana
+                );
+
+
+            historyItem.innerHTML = `
+
+                <div class="history-character">
+
+                    <div class="history-kana">
+                        ${item.kana}
+                    </div>
+
+                    <div class="history-sound">
+                        ${item.sound}
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div class="history-label">
+                        맞음
+                    </div>
+
+                    <div class="history-value">
+                        ${correct}회
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div class="history-label">
+                        틀림
+                    </div>
+
+                    <div class="history-value">
+                        ${wrong}회
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div class="history-label">
+                        정답률
+                    </div>
+
+                    <div
+                        class="history-value ${accuracyClass}"
+                    >
+                        ${accuracy}%
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="history-star-button ${
+                        isStarred ? "active" : ""
+                    }"
+                    aria-label="오답노트 등록"
+                >
+                    ${isStarred ? "★" : "☆"}
+                </button>
+
+            `;
+
+
+            const historyStarButton =
+
+                historyItem.querySelector(
+                    ".history-star-button"
+                );
+
+
+            historyStarButton.addEventListener(
+
+                "click",
+
+                () => {
+
+                    const kana =
+                        item.kana;
+
+
+                    const index =
+                        starredKana.indexOf(
+                            kana
+                        );
+
+
+                    if (index === -1) {
+
+                        starredKana.push(
+                            kana
+                        );
+
+                    }
+
+                    else {
+
+                        starredKana.splice(
+                            index,
+                            1
+                        );
+
+                    }
+
+
+                    saveStarredKana();
+
+                    renderHistory();
+
+                    renderFavorites();
+
+                    updateStarButton();
+
+                }
+
+            );
+
+
+            historyList.appendChild(
+                historyItem
+            );
+
+        });
+
+    }
+
+
+    // ==========================================
+    // 설정 화면 이동
+    // ==========================================
+
+    settingsButton.addEventListener(
+
+        "click",
+
+        () => {
+
+            Object.values(
+                pages
+            ).forEach(
+                pageElement => {
+
+                    pageElement.classList
+                        .remove(
+                            "active"
+                        );
+
+                }
+            );
+
+
+            pages.settings
+                .classList
+                .add("active");
+
+
+            menuItems.forEach(
+                menuItem => {
+
+                    menuItem.classList
+                        .remove(
+                            "active"
+                        );
+
+                }
+            );
+
+
+            closeMenu();
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 문자 종류 설정
+    // ==========================================
+
+    characterTypeSelect.addEventListener(
+
+        "change",
+
+        () => {
+
+            characterType =
+                characterTypeSelect.value;
+
+
+            saveSettings();
+
+
+            createQuestion();
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 출제 범위 설정
+    // ==========================================
+
+    questionRangeSelect.addEventListener(
+
+        "change",
+
+        () => {
+
+            questionRange =
+                questionRangeSelect.value;
+
+
+            saveSettings();
+
+
+            createQuestion();
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 자동 오답노트 설정
+    // ==========================================
+
+    autoFavoriteToggle.addEventListener(
+
+        "change",
+
+        () => {
+
+            autoFavorite =
+                autoFavoriteToggle.checked;
+
+
+            saveSettings();
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 오답노트 초기화
+    // ==========================================
+
+    resetFavoritesButton.addEventListener(
+
+        "click",
+
+        () => {
+
+            const confirmed =
+
+                confirm(
+                    "오답노트를 초기화하시겠습니까?"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            starredKana = [];
+
+
+            saveStarredKana();
+
+
+            renderFavorites();
+
+
+            updateStarButton();
+
+
+            // 오답노트만 출제 중이면
+            // 출제 가능한 문제가 없어짐
+
+            if (
+                questionRange ===
+                "favorite-only"
+            ) {
+
+                createQuestion();
+
+            }
+
+
+            alert(
+                "오답노트가 초기화되었습니다."
+            );
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 기록 초기화
+    // ==========================================
+
+    resetHistoryButton.addEventListener(
+
+        "click",
+
+        () => {
+
+            const confirmed =
+
+                confirm(
+                    "모든 퀴즈 기록을 초기화하시겠습니까?"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            quizHistory = {};
+
+
+            saveQuizHistory();
+
+
+            renderHistory();
+
+            renderFavorites();
+
+
+            alert(
+                "퀴즈 기록이 초기화되었습니다."
+            );
+
+        }
+
+    );
+
+
+    // ==========================================
+    // 페이지
+    // ==========================================
+
+    const menuItems =
+
+        document.querySelectorAll(
+            ".menu-item"
+        );
+
+
+    const pages = {
+
+        quiz:
+            document.getElementById(
+                "quizPage"
+            ),
+
+        favorites:
+            document.getElementById(
+                "favoritesPage"
+            ),
+
+        history:
+            document.getElementById(
+                "historyPage"
+            ),
+
+        settings:
+            document.getElementById(
+                "settingsPage"
+            )
+
+    };
+
+
+    // ==========================================
+    // 페이지 전환
+    // ==========================================
+
+    menuItems.forEach(item => {
+
+        item.addEventListener(
+
+            "click",
+
+            () => {
+
+                const page =
+                    item.dataset.page;
+
+
+                Object.values(
+                    pages
+                ).forEach(
+                    pageElement => {
+
+                        pageElement.classList
+                            .remove(
+                                "active"
+                            );
+
+                    }
+                );
+
+
+                pages[page]
+                    .classList
+                    .add("active");
+
+
+                menuItems.forEach(
+                    menuItem => {
+
+                        menuItem.classList
+                            .remove(
+                                "active"
+                            );
+
+                    }
+                );
+
+
+                item.classList.add(
+                    "active"
+                );
+
+
+                if (
+                    page === "favorites"
+                ) {
+
+                    renderFavorites();
+
+                }
+
+
+                if (
+                    page === "history"
+                ) {
+
+                    renderHistory();
+
+                }
+
+
+                closeMenu();
+
+            }
+
+        );
+
+    });
+
+
+    // ==========================================
+    // 프로그램 시작
+    // ==========================================
+
+    renderFavorites();
+
+    renderHistory();
+
+    createQuestion();
+
+
+</script>
