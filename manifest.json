@@ -1,0 +1,19 @@
+{
+    "name": "일본어 문자 퀴즈",
+    "short_name": "일본어 퀴즈",
+    "description": "히라가나와 가타카나를 공부하는 일본어 문자 퀴즈",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#f5f5f7",
+    "theme_color": "#007aff",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
