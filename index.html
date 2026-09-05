@@ -67,6 +67,7 @@
             width: 100%;
             max-width: 480px;
 
+            height: 100vh;
             height: 100dvh;
 
             min-height: 0;
@@ -80,6 +81,8 @@
             flex-direction: column;
 
             align-items: center;
+
+            overflow: hidden;
         }
 
 
@@ -588,13 +591,43 @@
             width: 100%;
             height: 100%;
 
-            overflow: hidden;
+            overflow-x: hidden;
+            scrollbar-width: none;
+        }
+
+
+        /* 스크롤바 숨기기 */
+
+        .page::-webkit-scrollbar {
+            display: none;
         }
 
 
         .page.active {
 
             display: block;
+        }
+
+        /* ==========================================
+        퀴즈 화면
+        스크롤 금지
+        ========================================== */
+
+        #quizPage {
+            overflow-y: hidden;
+        }
+
+
+        /* ==========================================
+        오답노트 / 기록 / 설정
+        스크롤 허용
+        ========================================== */
+
+        #favoritesPage,
+        #historyPage,
+        #settingsPage {
+
+            overflow-y: auto;
         }
 
 
