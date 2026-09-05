@@ -273,6 +273,9 @@
         .choice-button:focus,
         .choice-button:focus-visible {
             outline: none;
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
 }
 
         .choice-button:hover {
@@ -2568,62 +2571,59 @@
 
             ]);
 
-
-        // 기존 선택지 제거
-
         choicesElement.replaceChildren();
 
 
-        // 브라우저가 이전 터치 상태를
-        // 렌더링할 시간을 준 후 새 버튼 생성
+        choices.forEach(choice => {
 
-        requestAnimationFrame(() => {
-
-            requestAnimationFrame(() => {
-
-                choices.forEach(choice => {
-
-                    const button =
-                        document.createElement(
-                            "button"
-                        );
+            const button =
+                document.createElement(
+                    "button"
+                );
 
 
-                    button.type = "button";
-
-                    button.className =
-                        "choice-button";
-
-                    button.textContent =
-                        choice;
+            button.className =
+                "choice-button";
 
 
-                    button.addEventListener(
+            button.type = "button";    
 
-                        "click",
 
-                        () => {
+            button.textContent =
+                choice;
 
-                            checkAnswer(
-                                button,
-                                choice
-                            );
+            
+            // 모바일에서 터치 후 포커스가 남는 것을 방지
+            button.addEventListener(
+                "pointerdown",
+                event => {
 
-                        }
+                    event.preventDefault();
 
+                }
+            );
+
+            button.addEventListener(
+
+                "click",
+
+                () => {
+
+                    checkAnswer(
+                        button,
+                        choice
                     );
 
+                }
 
-                    choicesElement.appendChild(
-                        button
-                    );
+            );
 
-                });
 
-            });
+            choicesElement.appendChild(
+                button
+            );
 
         });
-
 
     }
 
@@ -2699,7 +2699,13 @@
 
                 setTimeout(() => {
 
-                    createQuestion();
+                    selectedButton.blur();
+
+                    requestAnimationFrame(() => {
+
+                        createQuestion();
+
+                    });
 
                 }, 50);
 
