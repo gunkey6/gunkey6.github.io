@@ -264,8 +264,19 @@
                 background-color 0.2s;
 
             -webkit-tap-highlight-color: transparent;
+            -webkit-appearance: none;
+            appearance: none;
+            outline: none;
         }
 
+
+        .choice-button:focus,
+        .choice-button:focus-visible {
+            outline: none;
+            box-shadow:
+                0 2px 8px
+                rgba(0, 0, 0, 0.08);
+}
 
         .choice-button:hover {
             background: #f0f0f0;
@@ -2318,6 +2329,9 @@
             document.activeElement.blur();
         }
 
+        // 기존 선택지를 완전히 제거
+        choicesElement.replaceChildren();
+
         resultElement.textContent = "";
 
         resultElement.className =
@@ -2351,10 +2365,7 @@
                 "—";
 
 
-            choicesElement.innerHTML =
-                "";
-
-
+            
             resultElement.textContent =
                 "오답노트에 등록된 문자가 없습니다.";
 
@@ -2576,9 +2587,22 @@
                 "choice-button";
 
 
+            button.type = "button";    
+
+
             button.textContent =
                 choice;
 
+            
+            // 모바일에서 터치 후 포커스가 남는 것을 방지
+            button.addEventListener(
+                "pointerdown",
+                event => {
+
+                    event.preventDefault();
+
+                }
+            );
 
             button.addEventListener(
 
@@ -2675,15 +2699,6 @@
             if (autoNext) {
 
                 setTimeout(() => {
-
-                    // 모바일에서 이전 선택지의
-                    // 포커스/터치 상태 제거
-                    if (document.activeElement) {
-                        document.activeElement.blur();
-                    }
-
-                    // 이전 선택지 제거
-                    choicesElement.innerHTML = "";
 
                     createQuestion();
 
