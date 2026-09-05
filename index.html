@@ -1499,6 +1499,31 @@
 
 
             <!-- ==================================
+                정답시 바로 다음 문제
+                ================================== -->
+
+            <div class="settings-item">
+
+                <div class="settings-label">
+                    정답시 바로 다음 문제
+                </div>
+
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="autoNextToggle"
+                    >
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- ==================================
                  오답노트 초기화
                  ================================== -->
 
@@ -1749,6 +1774,11 @@
             "autoFavoriteToggle"
         );
 
+    const autoNextToggle =
+        document.getElementById(
+            "autoNextToggle"
+        );
+
     const resetFavoritesButton =
         document.getElementById(
             "resetFavoritesButton"
@@ -1825,6 +1855,23 @@
     }
 
 
+    let autoNext =
+        localStorage.getItem(
+            "autoNext"
+        );
+
+
+    if (autoNext === null) {
+
+        autoNext = false;
+
+    } else {
+
+        autoNext =
+            autoNext === "true";
+
+}
+
     // ==========================================
     // 출제범위 설정
     // ==========================================
@@ -1845,6 +1892,10 @@
 
     autoFavoriteToggle.checked =
         autoFavorite;
+
+
+    autoNextToggle.checked =
+        autoNext;    
 
 
     characterTypeSelect.value =
@@ -1949,6 +2000,15 @@
             "autoFavorite",
 
             String(autoFavorite)
+
+        );
+
+
+        localStorage.setItem(
+
+            "autoNext",
+
+            String(autoNext)
 
         );
 
@@ -2596,6 +2656,21 @@
                 currentQuestion.kana,
                 true
             );
+
+            // 정답시 바로 다음 문제
+
+            if (autoNext) {
+
+                setTimeout(() => {
+
+                    createQuestion();
+
+                }, 50);
+
+                return;
+
+            }
+
 
         }
 
@@ -3325,6 +3400,23 @@
     );
 
 
+    autoNextToggle.addEventListener(
+
+        "change",
+
+        () => {
+
+            autoNext =
+                autoNextToggle.checked;
+
+
+            saveSettings();
+
+        }
+
+    );
+
+
     // ==========================================
     // 오답노트 초기화
     // ==========================================
@@ -3594,4 +3686,3 @@
     }
 
 </script>
-
