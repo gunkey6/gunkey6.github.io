@@ -67,7 +67,6 @@
             width: 100%;
             max-width: 480px;
 
-            height: 100vh;
             height: 100dvh;
 
             min-height: 0;
@@ -584,17 +583,12 @@
            ========================================== */
 
         .page {
+            display: none;
 
             width: 100%;
             height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
 
-            scrollbar-width: none;
-        }
-
-        .page::-webkit-scrollbar {
-            display: none;
+            overflow: hidden;
         }
 
 
