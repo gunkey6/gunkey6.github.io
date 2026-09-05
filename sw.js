@@ -1,0 +1,109 @@
+const CACHE_NAME = "japanese-quiz-v1";
+
+const FILES_TO_CACHE = [
+    "./",
+    "./index.html",
+    "./manifest.json",
+    "./icon-512.png"
+];
+
+
+// ==========================================
+// 설치
+// ==========================================
+
+self.addEventListener(
+    "install",
+    event => {
+
+        event.waitUntil(
+
+            caches.open(CACHE_NAME)
+                .then(cache => {
+
+                    return cache.addAll(
+                        FILES_TO_CACHE
+                    );
+
+                })
+
+        );
+
+
+        self.skipWaiting();
+
+    }
+);
+
+
+// ==========================================
+// 활성화
+// ==========================================
+
+self.addEventListener(
+    "activate",
+    event => {
+
+        event.waitUntil(
+
+            caches.keys()
+                .then(cacheNames => {
+
+                    return Promise.all(
+
+                        cacheNames
+                            .filter(
+                                cacheName =>
+                                    cacheName !==
+                                    CACHE_NAME
+                            )
+                            .map(
+                                cacheName =>
+                                    caches.delete(
+                                        cacheName
+                                    )
+                            )
+
+                    );
+
+                })
+
+        );
+
+
+        self.clients.claim();
+
+    }
+);
+
+
+// ==========================================
+// 요청 처리
+// ==========================================
+
+self.addEventListener(
+    "fetch",
+    event => {
+
+        event.respondWith(
+
+            caches.match(event.request)
+                .then(cachedResponse => {
+
+                    if (cachedResponse) {
+
+                        return cachedResponse;
+
+                    }
+
+
+                    return fetch(
+                        event.request
+                    );
+
+                })
+
+        );
+
+    }
+);
