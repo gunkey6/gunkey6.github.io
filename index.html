@@ -274,25 +274,23 @@
 
             cursor: pointer;
 
-            transition:
-                transform 0.1s,
-                background-color 0.2s;
-
             -webkit-tap-highlight-color: transparent;
             -webkit-appearance: none;
             appearance: none;
+
             outline: none;
-            /* 모바일 터치 후 잔상 방지 */
-            -webkit-touch-callout: none;
+
+            transition:
+                background-color 0.2s;
+
+            /* 터치 상태 잔상 방지 */
+            touch-action: manipulation;
         }
 
 
         .choice-button:focus,
         .choice-button:focus-visible {
             outline: none;
-            box-shadow:
-                0 2px 8px
-                rgba(0, 0, 0, 0.08);
 }
 
         .choice-button:hover {
@@ -300,10 +298,7 @@
         }
 
 
-        .choice-button:active {
-            transform: scale(0.97);
-        }
-
+    
 
         .choice-button:disabled {
             cursor: default;
@@ -1239,18 +1234,7 @@
 
         }
 
-        @media (hover: none) and (pointer: coarse) {
-
-            .choice-button {
-                transition:
-                    background-color 0.2s;
-            }
-
-            .choice-button:active {
-                transform: none;
-            }
-
-        }
+        
 
     </style>
 
@@ -2386,13 +2370,20 @@
 
     function createQuestion() {
 
-        // 모바일 터치 후 남아있는 포커스 제거
-        if (document.activeElement) {
+        // 포커스 제거
+        if (
+            document.activeElement &&
+            document.activeElement !== document.body
+        ) {
             document.activeElement.blur();
         }
 
-        // 기존 선택지를 완전히 제거
+        // 이전 선택지를 DOM에서 완전히 제거
         choicesElement.replaceChildren();
+
+        // 브라우저가 이전 터치 상태를 유지하지 못하도록
+        choicesElement.offsetHeight;
+
 
         resultElement.textContent = "";
 
@@ -2647,12 +2638,17 @@
             button.className =
                 "choice-button";
 
+            button.style.transform = "none";
+            
+            button.style.boxShadow =
+                "0 2px 8px rgba(0, 0, 0, 0.08)";
 
             button.type = "button";    
 
-
             button.textContent =
                 choice;
+
+            
 
             
             // 모바일에서 터치 후 포커스가 남는 것을 방지
@@ -2661,6 +2657,8 @@
                 event => {
 
                     event.preventDefault();
+
+                   button.blur();
 
                 }
             );
@@ -2765,9 +2763,11 @@
                         document.activeElement.blur();
                     }
 
+                    choicesElement.replaceChildren();
+
                     createQuestion();
 
-                }, 150);
+                }, 210);
 
 
                 return;
