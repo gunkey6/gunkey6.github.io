@@ -10,6 +10,14 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <link rel="manifest" href="./manifest.json">
+
+    <meta
+        name="theme-color"
+        content="#007aff"
+    >
+
+
     <title>일본어 문자 퀴즈</title>
 
 
@@ -3542,3 +3550,48 @@
 
 
 </script>
+
+<script>
+
+    // ==========================================
+    // Service Worker 등록
+    // ==========================================
+
+    if (
+        "serviceWorker" in navigator
+    ) {
+
+        window.addEventListener(
+            "load",
+            () => {
+
+                navigator.serviceWorker
+                    .register("./sw.js")
+                    .then(
+                        registration => {
+
+                            console.log(
+                                "Service Worker 등록 완료:",
+                                registration.scope
+                            );
+
+                        }
+                    )
+                    .catch(
+                        error => {
+
+                            console.error(
+                                "Service Worker 등록 실패:",
+                                error
+                            );
+
+                        }
+                    );
+
+            }
+        );
+
+    }
+
+</script>
+
