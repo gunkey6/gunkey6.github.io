@@ -1190,6 +1190,19 @@
 
         }
 
+        @media (hover: none) and (pointer: coarse) {
+
+            .choice-button {
+                transition:
+                    background-color 0.2s;
+            }
+
+            .choice-button:active {
+                transform: none;
+            }
+
+        }
+
     </style>
 
 </head>
@@ -2699,8 +2712,23 @@
 
                 setTimeout(() => {
 
+                    // 기존 버튼의 모바일 터치 애니메이션 제거
+                    const oldButtons =
+                        choicesElement.querySelectorAll(
+                            ".choice-button"
+                        );
+
+                    oldButtons.forEach(button => {
+
+                        button.style.transition = "none";
+                        button.style.transform = "none";
+                        button.style.boxShadow = "none";
+
+                    });
+
                     selectedButton.blur();
 
+                    // 기존 버튼을 한 번 화면에 정상 상태로 반영한 후 교체
                     requestAnimationFrame(() => {
 
                         createQuestion();
