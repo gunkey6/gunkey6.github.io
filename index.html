@@ -5,10 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
 
     <link rel="manifest" href="./manifest.json">
 
@@ -62,26 +59,23 @@
 
         .container {
 
-            position: relative;
-
+            position: fixed; /* absolute 대신 fixed로 고정 */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
-            max-width: 480px;
-
-            height: 100vh;
-            height: 100dvh;
-
-            min-height: 0;
-
+            height: 100%;
+            
+            /* 터치 스크롤 동작 자체를 방지 */
+            touch-action: none;
+            overscroll-behavior: none;
+            
             margin: 0 auto;
-
-            padding: 40px 20px 30px;
-
+            padding: 20px 20px 20px;
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             overflow: hidden;
         }
 
@@ -4309,6 +4303,31 @@
         );
 
     }
+
+    // 키보드 팝업 시 스크롤 및 레이아웃 쏠림 방지
+    if (window.visualViewport) {
+        const container = document.querySelector('.container');
+
+        function handleViewportChange() {
+            // 현재 시각적 뷰포트 높이에 맞춰 컨테이너 높이 재조정
+            container.style.height = `${window.visualViewport.height}px`;
+            
+            // 키보드로 인해 발생할 수 있는 브라우저 강제 스크롤을 상단으로 고정
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+        }
+
+        window.visualViewport.addEventListener('resize', handleViewportChange);
+        window.visualViewport.addEventListener('scroll', handleViewportChange);
+    }
+
+    // input 요소 포커스 시 브라우저의 자동 스크롤(scrollIntoView) 방지
+    answerInput.addEventListener('focus', () => {
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+            document.body.scrollTop = 0;
+        }, 50);
+    });
 
 </script>
 </body>
