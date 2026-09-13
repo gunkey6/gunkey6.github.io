@@ -2591,7 +2591,21 @@
     // 문제 생성
     // ==========================================
 
-    function createQuestion() {
+    
+    function focusAnswerInput() {
+        if (quizMode !== "input" || !answerInput || answerInput.disabled) return;
+
+        answerInput.focus();
+
+        // Mobile browsers may delay the keyboard until the current UI update finishes.
+        setTimeout(() => {
+            if (quizMode === "input" && answerInput && !answerInput.disabled) {
+                answerInput.focus();
+            }
+        }, 50);
+    }
+
+function createQuestion() {
 
         // 포커스 제거
         if (
@@ -2611,6 +2625,8 @@
             answerInput.value = "";
             answerInput.disabled = false;
             answerSubmit.disabled = false;
+        
+            focusAnswerInput();
         } else {
             choicesElement.style.display = "grid";
             answerInputWrap.style.display = "none";
