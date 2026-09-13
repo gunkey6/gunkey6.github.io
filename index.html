@@ -525,6 +525,137 @@
         }
 
 
+        /* 퀴즈 하위 메뉴 */
+
+        .quiz-submenu {
+
+            display: none;
+
+            background: #fafafa;
+
+            border-bottom: 1px solid #eee;
+        }
+
+
+        .quiz-submenu.open {
+
+            display: block;
+        }
+
+
+        .quiz-submenu-item {
+
+            width: 100%;
+
+            height: 48px;
+
+            border: none;
+
+            background: transparent;
+
+            text-align: left;
+
+            padding: 0 25px 0 45px;
+
+            font-size: 16px;
+
+            color: #555;
+
+            cursor: pointer;
+        }
+
+
+        .quiz-submenu-item:hover {
+            background: #f0f0f2;
+        }
+
+
+        .quiz-submenu-item.active {
+            color: #007aff;
+            font-weight: 700;
+        }
+
+
+        /* 직접 입력 */
+
+        .answer-input-wrap {
+
+            width: 100%;
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 40px;
+        }
+
+
+        .answer-input {
+
+            flex: 1;
+
+            width: 0;
+
+            height: 58px;
+
+            min-width: 0;
+
+            border: 2px solid transparent;
+
+            border-radius: 14px;
+
+            background: white;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+            padding: 0 18px;
+
+            font-size: 20px;
+
+            text-align: center;
+
+            outline: none;
+
+        }
+
+
+        .answer-input:focus {
+
+            border: 2px solid #007aff;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+        }
+
+
+        .answer-submit {
+
+            width: 88px;
+
+            height: 58px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background: #007aff;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+        }
+
+
+        .answer-submit:disabled {
+            background: #ccc;
+            cursor: default;
+        }
+
+
         /* ==========================================
            설정 버튼
            ========================================== */
@@ -1238,7 +1369,23 @@
 
         
 
-    </style>
+    
+        /* 퀴즈 메인 메뉴는 클릭하지 않고 하위 메뉴만 선택 */
+        #quizMenuButton {
+            cursor: default;
+        }
+
+        #quizMenuButton:focus {
+            outline: none;
+        }
+
+        /* 다른 페이지에서는 객관식/직접입력 색상을 기본색으로 표시 */
+        #quizSubmenu:not(.quiz-page-active) .quiz-submenu-item {
+            color: #555;
+            font-weight: 400;
+        }
+
+</style>
 
 </head>
 
@@ -1271,11 +1418,33 @@
 
 
     <button
-        class="menu-item active"
+        id="quizMenuButton"
+        class="menu-item"
         data-page="quiz"
+        aria-expanded="true"
     >
         퀴즈
     </button>
+
+    <div id="quizSubmenu" class="quiz-submenu open">
+
+        <button
+            class="quiz-submenu-item active"
+            data-quiz-mode="multiple"
+            type="button"
+        >
+            객관식
+        </button>
+
+        <button
+            class="quiz-submenu-item"
+            data-quiz-mode="input"
+            type="button"
+        >
+            직접 입력
+        </button>
+
+    </div>
 
 
     <button
@@ -1369,6 +1538,32 @@
             id="choices"
             class="choices"
         ></div>
+
+
+        <div
+            id="answerInputWrap"
+            class="answer-input-wrap"
+            style="display: none;"
+        >
+            <input
+                id="answerInput"
+                class="answer-input"
+                type="text"
+                inputmode="text"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                placeholder="발음을 입력하세요"
+                aria-label="발음 입력"
+            >
+            <button
+                id="answerSubmit"
+                class="answer-submit"
+                type="button"
+            >
+                확인
+            </button>
+        </div>
 
 
         <!-- 결과 -->
@@ -1806,6 +2001,24 @@
     const choicesElement =
         document.getElementById("choices");
 
+    const answerInputWrap =
+        document.getElementById("answerInputWrap");
+
+    const answerInput =
+        document.getElementById("answerInput");
+
+    const answerSubmit =
+        document.getElementById("answerSubmit");
+
+    const quizMenuButton =
+        document.getElementById("quizMenuButton");
+
+    const quizSubmenu =
+        document.getElementById("quizSubmenu");
+
+    const quizSubmenuItems =
+        document.querySelectorAll(".quiz-submenu-item");
+
     const resultElement =
         document.getElementById("result");
 
@@ -1872,6 +2085,9 @@
     // ==========================================
 
     let currentQuestion = null;
+
+    // 바로 직전 출제 문자
+    let previousQuestionKana = null;
 
 
     // ==========================================
@@ -1978,6 +2194,10 @@
     // ==========================================
 
     let historySortMode = 0;
+
+    let quizMode =
+        localStorage.getItem("quizMode") ||
+        "multiple";
 
 
     // ==========================================
@@ -2315,8 +2535,9 @@
                 ) {
 
                     // 오답노트 문자
-                    // 가중치 2
+                    // 가중치 3
 
+                    weightedPool.push(item);
                     weightedPool.push(item);
                     weightedPool.push(item);
 
@@ -2383,6 +2604,21 @@
         // 이전 선택지를 DOM에서 완전히 제거
         choicesElement.replaceChildren();
 
+        // 퀴즈 모드에 따라 입력 UI 전환
+        if (quizMode === "input") {
+            choicesElement.style.display = "none";
+            answerInputWrap.style.display = "flex";
+            answerInput.value = "";
+            answerInput.disabled = false;
+            answerSubmit.disabled = false;
+        } else {
+            choicesElement.style.display = "grid";
+            answerInputWrap.style.display = "none";
+            answerInput.value = "";
+            answerInput.disabled = false;
+            answerSubmit.disabled = false;
+        }
+
         // 브라우저가 이전 터치 상태를 유지하지 못하도록
         choicesElement.offsetHeight;
 
@@ -2441,16 +2677,50 @@
         // 랜덤 문제 선택
         // --------------------------------------
 
-        const randomIndex =
+        // 랜덤 문제 선택
+        // 바로 이전 문제와 같은 문자라면 한 번 더 추첨한다.
+        // 출제 대상이 1개뿐인 경우에는 같은 문자가 나올 수 있도록 한다.
+        let randomIndex =
 
             Math.floor(
                 Math.random() *
                 questionPool.length
             );
 
+        let selectedQuestion =
+            questionPool[randomIndex];
+
+        if (
+            questionPool.length > 1 &&
+            selectedQuestion.kana === previousQuestionKana
+        ) {
+
+            const retryPool =
+                questionPool.filter(
+                    item =>
+                        item.kana !==
+                        previousQuestionKana
+                );
+
+            if (retryPool.length > 0) {
+
+                selectedQuestion =
+                    retryPool[
+                        Math.floor(
+                            Math.random() *
+                            retryPool.length
+                        )
+                    ];
+
+            }
+
+        }
 
         currentQuestion =
-            questionPool[randomIndex];
+            selectedQuestion;
+
+        previousQuestionKana =
+            currentQuestion.kana;
 
 
         kanaElement.textContent =
@@ -2628,6 +2898,25 @@
 
         
 
+
+        if (quizMode === "input") {
+
+            requestAnimationFrame(() => {
+
+                if (
+                    quizMode === "input" &&
+                    currentQuestion &&
+                    !answerInput.disabled
+                ) {
+
+                    answerInput.focus();
+
+                }
+
+            });
+
+            return;
+        }
 
         choices.forEach(choice => {
 
@@ -2843,6 +3132,187 @@
         nextButton.disabled = false;
 
     }
+
+
+    // ==========================================
+    // 직접 입력 정답 확인
+    // ==========================================
+
+    function normalizeAnswer(value) {
+
+        return value
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "");
+
+    }
+
+
+    function checkInputAnswer() {
+
+        if (
+            quizMode !== "input" ||
+            !currentQuestion ||
+            answerSubmit.disabled
+        ) {
+            return;
+        }
+
+        const selectedAnswer =
+            normalizeAnswer(answerInput.value);
+
+        if (!selectedAnswer) {
+            answerInput.focus();
+            return;
+        }
+
+        const correctAnswer =
+            normalizeAnswer(currentQuestion.sound);
+
+        answerInput.disabled = true;
+        answerSubmit.disabled = true;
+
+        if (selectedAnswer === correctAnswer) {
+
+            resultElement.textContent =
+                "✓ 정답입니다!";
+
+            resultElement.className =
+                "result correct";
+
+            recordAnswer(
+                currentQuestion.kana,
+                true
+            );
+
+            if (autoNext) {
+
+                setTimeout(() => {
+                    createQuestion();
+                }, 60);
+
+                return;
+            }
+
+        } else {
+
+            resultElement.textContent =
+                `✗ 틀렸습니다. 정답은 ${currentQuestion.sound}입니다.`;
+
+            resultElement.className =
+                "result wrong";
+
+            recordAnswer(
+                currentQuestion.kana,
+                false
+            );
+
+            if (autoFavorite) {
+
+                const kana =
+                    currentQuestion.kana;
+
+                if (!starredKana.includes(kana)) {
+                    starredKana.push(kana);
+                    saveStarredKana();
+                }
+            }
+
+            updateStarButton();
+            renderFavorites();
+        }
+
+        nextButton.disabled = false;
+    }
+
+
+    answerSubmit.addEventListener(
+        "click",
+        checkInputAnswer
+    );
+
+
+    answerInput.addEventListener(
+        "keydown",
+        event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkInputAnswer();
+            }
+        }
+    );
+
+
+    // ==========================================
+    // 퀴즈 모드 전환
+    // ==========================================
+
+    function setQuizMode(mode) {
+
+        quizMode = mode === "input"
+            ? "input"
+            : "multiple";
+
+        localStorage.setItem(
+            "quizMode",
+            quizMode
+        );
+
+        quizSubmenuItems.forEach(item => {
+            item.classList.toggle(
+                "active",
+                pages.quiz.classList.contains("active") &&
+                item.dataset.quizMode === quizMode
+            );
+        });
+
+        createQuestion();
+
+    }
+
+
+    quizMenuButton.addEventListener(
+        "click",
+        () => {
+            const isOpen =
+                quizSubmenu.classList.toggle("open");
+
+            quizMenuButton.setAttribute(
+                "aria-expanded",
+                String(isOpen)
+            );
+        }
+    );
+
+
+    quizSubmenuItems.forEach(item => {
+
+        item.addEventListener(
+            "click",
+            () => {
+
+                setQuizMode(
+                    item.dataset.quizMode
+                );
+
+                Object.values(pages).forEach(
+                    pageElement =>
+                        pageElement.classList.remove("active")
+                );
+
+                pages.quiz.classList.add("active");
+
+                menuItems.forEach(menuItem =>
+                    menuItem.classList.remove("active")
+                );
+
+                quizMenuButton.classList.add("active");
+                quizSubmenu.classList.add("quiz-page-active");
+
+                closeMenu();
+            }
+        );
+    });
 
 
     // ==========================================
@@ -3635,9 +4105,8 @@
     // ==========================================
 
     const menuItems =
-
         document.querySelectorAll(
-            ".menu-item"
+            ".menu-item:not(#quizMenuButton)"
         );
 
 
@@ -3682,6 +4151,26 @@
                     item.dataset.page;
 
 
+                if (page === "quiz") {
+                    quizSubmenu.classList.add("open");
+                    quizSubmenu.classList.add("quiz-page-active");
+                    quizMenuButton.setAttribute("aria-expanded", "true");
+
+                    quizSubmenuItems.forEach(subItem => {
+                        subItem.classList.toggle(
+                            "active",
+                            subItem.dataset.quizMode === quizMode
+                        );
+                    });
+                } else {
+                    quizSubmenu.classList.remove("quiz-page-active");
+
+                    quizSubmenuItems.forEach(subItem => {
+                        subItem.classList.remove("active");
+                    });
+                }
+
+
                 Object.values(
                     pages
                 ).forEach(
@@ -3711,6 +4200,15 @@
 
                     }
                 );
+
+                quizMenuButton.classList.toggle("active", page === "quiz");
+
+                if (page !== "quiz") {
+                    quizSubmenu.classList.remove("quiz-page-active");
+                    quizSubmenuItems.forEach(subItem => {
+                        subItem.classList.remove("active");
+                    });
+                }
 
 
                 item.classList.add(
@@ -3748,6 +4246,20 @@
     // ==========================================
     // 프로그램 시작
     // ==========================================
+
+    quizMenuButton.classList.toggle(
+        "active",
+        pages.quiz.classList.contains("active")
+    );
+    quizSubmenu.classList.add("quiz-page-active");
+
+    quizSubmenuItems.forEach(item => {
+        item.classList.toggle(
+            "active",
+            pages.quiz.classList.contains("active") &&
+            item.dataset.quizMode === quizMode
+        );
+    });
 
     renderFavorites();
 
