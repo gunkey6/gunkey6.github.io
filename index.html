@@ -291,13 +291,13 @@
         .choice-button:focus,
         .choice-button:focus-visible {
             outline: none;
-}
+        }
 
         @media (hover: hover) and (pointer: fine) {
-        .choice-button:hover {
-            background: #f0f0f0;
+            .choice-button:hover {
+                background: #f0f0f0;
+            }
         }
-}
 
 
     
@@ -689,6 +689,7 @@
             display: flex;
 
             align-items: center;
+
             justify-content: center;
 
             padding: 0;
@@ -1023,6 +1024,7 @@
             display: flex;
 
             align-items: center;
+
             justify-content: center;
 
             line-height: 1;
@@ -2593,25 +2595,14 @@
 
     
     function focusAnswerInput() {
-        if (quizMode !== "input" || !answerInput || answerInput.disabled) return;
-
+        if (quizMode !== "input" || !answerInput) return;
         answerInput.focus();
-
-        // Mobile browsers may delay the keyboard until the current UI update finishes.
-        setTimeout(() => {
-            if (quizMode === "input" && answerInput && !answerInput.disabled) {
-                answerInput.focus();
-            }
-        }, 50);
     }
 
-function createQuestion() {
+    function createQuestion() {
 
-        // 포커스 제거
-        if (
-            document.activeElement &&
-            document.activeElement !== document.body
-        ) {
+        // 객관식 모드일 때는 포커스 해제
+        if (quizMode !== "input" && document.activeElement && document.activeElement !== document.body) {
             document.activeElement.blur();
         }
 
@@ -2623,15 +2614,14 @@ function createQuestion() {
             choicesElement.style.display = "none";
             answerInputWrap.style.display = "flex";
             answerInput.value = "";
-            answerInput.disabled = false;
+            answerInput.readOnly = false;
             answerSubmit.disabled = false;
-        
             focusAnswerInput();
         } else {
             choicesElement.style.display = "grid";
             answerInputWrap.style.display = "none";
             answerInput.value = "";
-            answerInput.disabled = false;
+            answerInput.readOnly = false;
             answerSubmit.disabled = false;
         }
 
@@ -2917,19 +2907,7 @@ function createQuestion() {
 
         if (quizMode === "input") {
 
-            requestAnimationFrame(() => {
-
-                if (
-                    quizMode === "input" &&
-                    currentQuestion &&
-                    !answerInput.disabled
-                ) {
-
-                    answerInput.focus();
-
-                }
-
-            });
+            focusAnswerInput();
 
             return;
         }
@@ -3178,14 +3156,15 @@ function createQuestion() {
             normalizeAnswer(answerInput.value);
 
         if (!selectedAnswer) {
-            answerInput.focus();
+            focusAnswerInput();
             return;
         }
 
         const correctAnswer =
             normalizeAnswer(currentQuestion.sound);
 
-        answerInput.disabled = true;
+        // disabled 처리 시 iOS 등 모바일에서 키보드가 내려가므로 readOnly 적용
+        answerInput.readOnly = true;
         answerSubmit.disabled = true;
 
         if (selectedAnswer === correctAnswer) {
@@ -3203,9 +3182,7 @@ function createQuestion() {
 
             if (autoNext) {
 
-                setTimeout(() => {
-                    createQuestion();
-                }, 60);
+                createQuestion();
 
                 return;
             }
@@ -3239,6 +3216,7 @@ function createQuestion() {
         }
 
         nextButton.disabled = false;
+        focusAnswerInput();
     }
 
 
@@ -3307,9 +3285,7 @@ function createQuestion() {
             "click",
             () => {
 
-                setQuizMode(
-                    item.dataset.quizMode
-                );
+                const targetMode = item.dataset.quizMode;
 
                 Object.values(pages).forEach(
                     pageElement =>
@@ -3326,6 +3302,12 @@ function createQuestion() {
                 quizSubmenu.classList.add("quiz-page-active");
 
                 closeMenu();
+
+                setQuizMode(targetMode);
+
+                if (targetMode === "input") {
+                    focusAnswerInput();
+                }
             }
         );
     });
@@ -4329,3 +4311,5 @@ function createQuestion() {
     }
 
 </script>
+</body>
+</html>
